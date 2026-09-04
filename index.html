@@ -18,6 +18,7 @@
             cursor: pointer;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .game-card:hover {
@@ -41,7 +42,7 @@
             background-repeat: no-repeat;
             position: relative;
             overflow: hidden;
-            border-radius: 15px 15px 0 0;
+            border-radius: 15px;
             background-color: #0f0f1a;
         }
 
@@ -97,6 +98,7 @@
             color: #667eea;
             margin-bottom: 0.4rem;
             line-height: 1.4;
+            display: none;  /* ✅ Hidden by default */
         }
 
         .game-card-actions {
@@ -188,6 +190,24 @@
             color: #b0b0b0;
         }
 
+        /* ✅ Desktop: Show title on hover */
+        @media (min-width: 481px) {
+            .game-card:hover .game-card-title {
+                display: block;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.85);
+                color: white;
+                padding: 0.8rem 0.5rem;
+                text-align: center;
+                font-size: 0.95rem;
+                z-index: 10;
+                border-radius: 0 0 15px 15px;
+            }
+        }
+
         /* Responsive Game Cards */
         @media (max-width: 768px) {
             .game-card-image {
@@ -206,7 +226,8 @@
             .game-card-content,
             .game-card-title,
             .game-card-actions,
-            .play-btn {
+            .play-btn,
+            .game-category-badge {
                 display: none !important;
             }
             .game-card {
@@ -468,14 +489,13 @@
                     return;
                 }
 
-                // Display games - FIXED IMAGE STYLING WITH FALLBACK
+                // Display games - REMOVED ICON AND BADGE
                 games.forEach(game => {
                     const hasImage = game.imageUrl && game.imageUrl.trim() !== '';
                     
                     const gameCard = `
                         <div class="game-card" onclick="playGame('${game.name}', '${game.gameUrl}', '${game.description}', '${game.imageUrl}', '${game.category}')">
                             <div class="game-card-image" ${hasImage ? `style="background-image: url('${game.imageUrl}');"` : ''}>
-                                <span class="game-category-badge">${game.category}</span>
                                 <i class="fas fa-gamepad"></i>
                             </div>
                             <div class="game-card-content">
