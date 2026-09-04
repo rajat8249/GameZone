@@ -200,6 +200,24 @@
                 height: 160px;
             }
         }
+
+        /* ✅ MOBILE FIX: Hide game name and button on mobile */
+        @media (max-width: 480px) {
+            .game-card-content,
+            .game-card-title,
+            .game-card-actions,
+            .play-btn {
+                display: none !important;
+            }
+            .game-card {
+                padding: 0;
+            }
+            .game-card-image {
+                height: 100%;
+                min-height: 120px;
+                border-radius: 15px;
+            }
+        }
     </style>
 </head>
 <body>
