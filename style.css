@@ -344,8 +344,8 @@ body {
 
 .games-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);  /* ✅ 6 columns on desktop */
-    gap: 1.5rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
 }
 
 /* ====================================
@@ -547,7 +547,7 @@ body {
 /* Large Tablets & Small Desktops (769px - 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
     .games-grid {
-        grid-template-columns: repeat(4, 1fr);  /* 4 columns on tablets */
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -566,7 +566,7 @@ body {
     }
 
     .games-grid {
-        grid-template-columns: repeat(3, 1fr);  /* 3 columns on tablets */
+        grid-template-columns: repeat(2, 1fr);
         gap: 1.5rem;
     }
 
@@ -584,7 +584,7 @@ body {
     }
 }
 
-/* Mobile Devices (320px - 480px) */
+/* Mobile Devices (320px - 480px) - UPDATED */
 @media (max-width: 480px) {
     .navbar {
         padding: 0.8rem 5%;
@@ -635,24 +635,20 @@ body {
     }
 
     .game-image {
-        height: 180px;
+        height: 100%;  /* Full height */
     }
 
-    .game-card h3 {
-        padding: 1.2rem 1.2rem 0.5rem;
-        font-size: 1.3rem;
+    .game-card {
+        border-radius: 15px;  /* Full rounded */
+        overflow: hidden;
     }
 
-    .game-card p {
-        padding: 0 1.2rem 1.2rem;
-        font-size: 0.9rem;
-    }
-
+    /* ✅ Hide game name and button on mobile */
+    .game-card-content,
+    .game-card h3,
+    .game-card p,
     .play-btn {
-        width: calc(100% - 2.4rem);
-        margin: 0 1.2rem 1.2rem;
-        padding: 1rem 1.5rem;
-        font-size: 1.05rem;
+        display: none !important;
     }
 
     .nav-drawer {
@@ -700,5 +696,23 @@ body {
 
     .game-card h3 {
         font-size: 1.2rem;
+    }
+}
+@media (max-width: 480px) {
+    .game-card-content,
+    .game-card h3,
+    .game-card p,
+    .play-btn {
+        display: none !important;
+    }
+
+    .game-card {
+        padding: 0;
+    }
+
+    .game-image {
+        height: 100%;
+        min-height: 120px;
+        border-radius: 15px;
     }
 }
