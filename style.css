@@ -10,7 +10,7 @@ body {
     color: #ffffff;
     line-height: 1.6;
     overflow-x: hidden;
-    font-size: 16px;  /* Minimum readable size */
+    font-size: 16px;
 }
 
 /* ====================================
@@ -91,7 +91,7 @@ body {
     color: white;
     font-size: 1.5rem;
     cursor: pointer;
-    width: 44px;  /* Touch-friendly */
+    width: 44px;
     height: 44px;
     border-radius: 50%;
     display: flex;
@@ -129,14 +129,14 @@ body {
 }
 
 .drawer-menu li {
-    padding: 1.2rem 1.5rem;  /* Larger tap target */
+    padding: 1.2rem 1.5rem;
     cursor: pointer;
     transition: all 0.3s;
     display: flex;
     align-items: center;
     gap: 1rem;
     color: #d0d0d0;
-    min-height: 50px;  /* Touch-friendly */
+    min-height: 50px;
 }
 
 .drawer-menu li:hover {
@@ -182,7 +182,7 @@ body {
 }
 
 .menu-icon {
-    width: 50px;  /* Touch-friendly */
+    width: 50px;
     height: 50px;
     background: rgba(102, 126, 234, 0.1);
     border-radius: 10px;
@@ -221,7 +221,7 @@ body {
 }
 
 .search-icon {
-    width: 48px;  /* Touch-friendly */
+    width: 48px;
     height: 48px;
     background: rgba(102, 126, 234, 0.1);
     border-radius: 50%;
@@ -344,7 +344,7 @@ body {
 
 .games-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);  /* Desktop: 4 columns */
+    grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
 }
 
@@ -427,7 +427,7 @@ body {
 .play-btn {
     width: calc(100% - 3rem);
     margin: 0 1.5rem 1.5rem;
-    padding: 0.9rem 1.5rem;  /* Larger on mobile */
+    padding: 0.9rem 1.5rem;
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
     border: none;
@@ -547,7 +547,7 @@ body {
 /* Large Tablets & Small Desktops (769px - 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
     .games-grid {
-        grid-template-columns: repeat(3, 1fr);  /* 3 columns */
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -566,7 +566,7 @@ body {
     }
 
     .games-grid {
-        grid-template-columns: repeat(2, 1fr);  /* 2 columns */
+        grid-template-columns: repeat(2, 1fr);
         gap: 1.5rem;
     }
 
@@ -630,8 +630,8 @@ body {
     }
 
     .games-grid {
-        grid-template-columns: 1fr;  /* 1 column */
-        gap: 1.5rem;
+        grid-template-columns: repeat(2, 1fr);  /* ✅ 2 columns on mobile */
+        gap: 1rem;
     }
 
     .game-image {
@@ -677,6 +677,11 @@ body {
 
 /* Extra Small Devices (320px - 360px) */
 @media (max-width: 360px) {
+    .games-grid {
+        grid-template-columns: repeat(2, 1fr);  /* ✅ 2 columns */
+        gap: 0.8rem;
+    }
+
     .hero-content h1 {
         font-size: 1.9rem;
     }
