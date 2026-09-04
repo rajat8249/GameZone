@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameZone - Play Free Online Games</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Game Card Styles - Professional Design */
+        .game-card {
+            background: #1a1a2e;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+
+        /* Game Card Image - FIXED */
+        .game-card-image {
+            height: 200px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            transition: transform 0.3s;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px 15px 0 0;
+            background-color: #0f0f1a;
+        }
+
+        .game-card-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+            transition: opacity 0.3s;
+            z-index: 1;
+        }
+
+        .game-card:hover .game-card-image::before {
+            opacity: 0;
+        }
+
+        .game-card-image i {
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s;
+        }
+
+        .game-card:hover .game-card-image i {
+            transform: scale(1.1);
+        }
+
+        /* Fallback image styling */
+        .game-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .game-card-content {
+            padding: 0.6rem;  /* CHANGED: 1.5rem → 1rem */
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .game-card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 0.4rem;  /* CHANGED: 1rem → 0.6rem */
+            line-height: 1.4;
+        }
+
+        .game-card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .play-btn {
+            flex: 1;
+            padding: 0.6rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .play-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .game-category-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            z-index: 3;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Loading Styles */
+        .loading { 
+            text-align: center; 
+            padding: 3rem; 
+            color: #667eea; 
+        }
+        
+        .loading i { 
+            font-size: 3rem; 
+            animation: spin 1s linear infinite; 
+        }
+
+        @keyframes spin { 
+            100% { 
+                transform: rotate(360deg); 
+            } 
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
+
+        /* No Games Message */
+        .no-games-message {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #667eea;
+        }
+
+        .no-games-message i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .no-games-message p {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+        }
+
+        /* Responsive Game Cards */
+        @media (max-width: 768px) {
+            .game-card-image {
+                height: 180px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-card-image {
+                height: 160px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Drawer -->
+    <div class="nav-drawer-overlay" id="navOverlay" onclick="closeNavDrawer()"></div>
+    
+    <div class="nav-drawer" id="navDrawer">
+        <div class="drawer-header">
+            <h2><i class="fas fa-gamepad"></i> GameZone</h2>
+            <button class="close-drawer" onclick="closeNavDrawer()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="drawer-content">
+            <div class="drawer-section">
+                <h3>Menu</h3>
+                <ul class="drawer-menu">
+                    <li onclick="showHomePage(); closeNavDrawer()">
+                        <i class="fas fa-home"></i> Home
+                    </li>
+                    <li onclick="showAllGames(); closeNavDrawer()">
+                        <i class="fas fa-th-large"></i> All Games
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="drawer-section">
+                <h3>Game Categories</h3>
+                <ul class="drawer-menu">
+                    <li onclick="filterGames('all'); closeNavDrawer()">
+                        <i class="fas fa-th-large"></i> All Games
+                    </li>
+                    <li onclick="filterGames('action'); closeNavDrawer()">
+                        <i class="fas fa-rocket"></i> Action
+                    </li>
+                    <li onclick="filterGames('strategy'); closeNavDrawer()">
+                        <i class="fas fa-chess"></i> Strategy
+                    </li>
+                    <li onclick="filterGames('racing'); closeNavDrawer()">
+                        <i class="fas fa-car"></i> Racing
+                    </li>
+                    <li onclick="filterGames('sports'); closeNavDrawer()">
+                        <i class="fas fa-football-ball"></i> Sports
+                    </li>
+                    <li onclick="filterGames('puzzle'); closeNavDrawer()">
+                        <i class="fas fa-puzzle-piece"></i> Puzzle
+                    </li>
+                    <li onclick="filterGames('shooter'); closeNavDrawer()">
+                        <i class="fas fa-crosshairs"></i> Shooter
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="drawer-section">
+                <h3>Quick Actions</h3>
+                <ul class="drawer-menu">
+                    <li onclick="openSearchPage()">
+                        <i class="fas fa-search"></i> Search Games
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="drawer-footer">
+            <p>&copy; 2026 GameZone</p>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="menu-icon" onclick="openNavDrawer()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="logo">
+                <h1><i class="fas fa-gamepad"></i> GameZone</h1>
+            </div>
+            <div class="nav-actions">
+                <div class="search-icon" onclick="openSearchPage()">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Home Section -->
+    <section class="hero" id="homeSection">
+        <div class="hero-content">
+            <h1>Welcome to GameZone</h1>
+            <p>Play the best games online. Unlimited fun, zero limits!</p>
+            <button class="cta-btn primary" onclick="showAllGames()">Explore Games</button>
+        </div>
+    </section>
+
+    <!-- Games Section -->
+    <section class="games-section" id="gamesSection" style="display: none;">
+        <h2 class="section-title" id="gamesTitle">All Games</h2>
+        
+        <div id="gamesLoading" class="loading" style="display: none;">
+            <i class="fas fa-spinner"></i>
+            <p style="margin-top: 1rem;">Loading games...</p>
+        </div>
+        
+        <div class="games-grid" id="gamesGrid">
+            <!-- Games will be loaded from Firebase -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2026 GameZone. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-discord"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" id="scrollTopBtn" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8D1Q6g_FNJYaFB2B4fIry1jGR2ArE9J8",
+            authDomain: "artonix-1fa99.firebaseapp.com",
+            projectId: "artonix-1fa99",
+            storageBucket: "artonix-1fa99.firebasestorage.app",
+            messagingSenderId: "661275750667",
+            appId: "1:661275750667:web:7cc2f54dc5fb47a573b20e",
+            measurementId: "G-D227P6KRDZ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Make functions global
+        window.openNavDrawer = () => {
+            document.getElementById('navDrawer').classList.add('active');
+            document.getElementById('navOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeNavDrawer = () => {
+            document.getElementById('navDrawer').classList.remove('active');
+            document.getElementById('navOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        window.openSearchPage = () => {
+            window.location.href = 'search.html';
+        };
+
+        window.scrollToTop = () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.showHomePage = () => {
+            document.getElementById('homeSection').style.display = 'flex';
+            document.getElementById('gamesSection').style.display = 'none';
+            showNotification('🏠 Home page opened');
+        };
+
+        window.showAllGames = async () => {
+            document.getElementById('homeSection').style.display = 'none';
+            document.getElementById('gamesSection').style.display = 'block';
+            document.getElementById('gamesTitle').textContent = 'All Games';
+            await loadGames();
+            showNotification('🎮 All Games opened');
+        };
+
+        window.filterGames = async (category) => {
+            document.getElementById('homeSection').style.display = 'none';
+            document.getElementById('gamesSection').style.display = 'block';
+            
+            const categoryNames = {
+                'all': 'All Games',
+                'action': 'Action Games',
+                'strategy': 'Strategy Games',
+                'racing': 'Racing Games',
+                'sports': 'Sports Games',
+                'puzzle': 'Puzzle Games',
+                'shooter': 'Shooter Games'
+            };
+            
+            document.getElementById('gamesTitle').textContent = categoryNames[category] || 'Games';
+            await loadGames(category);
+            showNotification('🎮 ' + categoryNames[category]);
+        };
+
+        async function loadGames(category = 'all') {
+            const loading = document.getElementById('gamesLoading');
+            const gamesGrid = document.getElementById('gamesGrid');
+            
+            loading.style.display = 'block';
+            gamesGrid.innerHTML = '';
+
+            try {
+                const q = query(collection(db, 'games'), orderBy('createdAt', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                loading.style.display = 'none';
+
+                if (querySnapshot.empty) {
+                    gamesGrid.innerHTML = `
+                        <div class="no-games-message">
+                            <i class="fas fa-gamepad"></i>
+                            <p>No games added yet. Check back soon!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let games = [];
+                querySnapshot.forEach((doc) => {
+                    games.push(doc.data());
+                });
+
+                // Filter by category if needed
+                if (category !== 'all') {
+                    games = games.filter(game => game.category === category);
+                }
+
+                if (games.length === 0) {
+                    gamesGrid.innerHTML = `
+                        <div class="no-games-message">
+                            <i class="fas fa-gamepad"></i>
+                            <p>No games in this category yet.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Display games - FIXED IMAGE STYLING WITH FALLBACK
+                games.forEach(game => {
+                    const hasImage = game.imageUrl && game.imageUrl.trim() !== '';
+                    
+                    const gameCard = `
+                        <div class="game-card" onclick="playGame('${game.name}', '${game.gameUrl}', '${game.description}', '${game.imageUrl}', '${game.category}')">
+                            <div class="game-card-image" ${hasImage ? `style="background-image: url('${game.imageUrl}');"` : ''}>
+                                <span class="game-category-badge">${game.category}</span>
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <div class="game-card-content">
+                                <h3 class="game-card-title">${game.name}</h3>
+                                <div class="game-card-actions">
+                                    <button class="play-btn">
+                                        <i class="fas fa-play"></i> Play Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    gamesGrid.innerHTML += gameCard;
+                });
+
+            } catch (error) {
+                console.error('Error loading games:', error);
+                loading.innerHTML = '<p style="color: #f5576c;">Error loading games. Please refresh.</p>';
+                loading.style.display = 'block';
+            }
+        }
+
+        // Play Game Function - Redirects to game.html
+        window.playGame = (gameName, gameUrl, gameDescription, imageUrl, category) => {
+            console.log('Playing game:', gameName, 'URL:', gameUrl);
+            showNotification('🎮 Opening ' + gameName + '...');
+            
+            if (gameUrl && gameUrl !== 'undefined') {
+                // Game data localStorage mein save karo
+                const gameData = {
+                    name: gameName,
+                    description: gameDescription,
+                    gameUrl: gameUrl,
+                    imageUrl: imageUrl,
+                    category: category
+                };
+                localStorage.setItem('currentGame', JSON.stringify(gameData));
+                
+                // game.html page pe navigate karo
+                window.location.href = 'game.html';
+            } else {
+                showNotification('❌ Game URL not available!');
+            }
+        };
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                font-family: 'Poppins', sans-serif;
+                font-weight: 500;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Scroll to top button
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollTopBtn.classList.add('active');
+            } else {
+                scrollTopBtn.classList.remove('active');
+            }
+        });
+
+        console.log('🎮 GameZone User Panel Ready!');
+    </script>
+
+    <script src="script.js"></script>
+</body>
+</html>

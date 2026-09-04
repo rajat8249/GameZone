@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Game - GameZone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0f0f1a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(15, 15, 26, 0.95);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #667eea;
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .back-btn, .fullscreen-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover, .fullscreen-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .game-container {
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 2rem 5%;
+        }
+
+        .game-header {
+            margin-bottom: 2rem;
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .game-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: #b0b0b0;
+            font-size: 0.95rem;
+            flex-wrap: wrap;
+        }
+
+        .game-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .game-meta i {
+            color: #667eea;
+        }
+
+        .game-player-wrapper {
+            background: #1a1a2e;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            border: 2px solid #667eea;
+        }
+
+        .game-player-header {
+            background: rgba(102, 126, 234, 0.2);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #667eea;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .game-player-header h3 {
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .player-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .fullscreen-btn-small, .close-game-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fullscreen-btn-small:hover, .close-game-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .close-game-btn {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .game-frame-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            background: #000;
+        }
+
+        .game-frame-container.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding-bottom: 0;
+            z-index: 9999;
+        }
+
+        #gameFrame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .game-info-section {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 2px solid #667eea;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            font-size: 2rem;
+        }
+
+        .game-description {
+            color: #d0d0d0;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .game-features {
+            margin-top: 2rem;
+        }
+
+        .features-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .features-list li {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #d0d0d0;
+        }
+
+        .features-list li i {
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .controls-section {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 2px solid #667eea;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .control-item {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .control-item i {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .control-item p {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+        }
+
+        .related-games-section {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 2rem;
+            border: 2px solid #667eea;
+        }
+
+        .related-games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .related-game-card {
+            background: #0f0f1a;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .related-game-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .related-game-image {
+            height: 120px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .related-game-info {
+            padding: 1rem;
+        }
+
+        .related-game-title {
+            color: #667eea;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .related-game-category {
+            color: #b0b0b0;
+            font-size: 0.85rem;
+        }
+
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 1.8rem;
+            }
+
+            .game-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .game-player-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .player-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .features-list {
+                grid-template-columns: 1fr;
+            }
+
+            .controls-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .nav-buttons button {
+                flex: 1;
+                justify-content: center;
+                font-size: 0.85rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .nav-buttons button span {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+
+            .nav-buttons button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="logo">
+                <h1><i class="fas fa-gamepad"></i> GameZone</h1>
+            </div>
+            <div class="nav-buttons">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i> <span>Back to Games</span>
+                </button>
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">
+                    <i class="fas fa-expand"></i> <span>Fullscreen</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Game Container -->
+    <div class="game-container">
+        <!-- Game Header -->
+        <div class="game-header">
+            <h1 class="game-title" id="gameTitle">Loading...</h1>
+            <div class="game-meta" id="gameMeta">
+                <!-- Meta info will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Game Player -->
+        <div class="game-player-wrapper">
+            <div class="game-player-header">
+                <h3><i class="fas fa-gamepad"></i> Game Player</h3>
+                <div class="player-actions">
+                    <button class="fullscreen-btn-small" onclick="toggleFullscreen()">
+                        <i class="fas fa-expand"></i> <span>Fullscreen</span>
+                    </button>
+                    <button class="close-game-btn" onclick="goBack()">
+                        <i class="fas fa-times"></i> <span>Close</span>
+                    </button>
+                </div>
+            </div>
+            <div class="game-frame-container" id="gameFrameContainer">
+                <iframe id="gameFrame" src="" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- About This Game -->
+        <div class="game-info-section">
+            <h2 class="section-title">
+                <i class="fas fa-info-circle"></i> About This Game
+            </h2>
+            <p class="game-description" id="gameDescription">
+                Loading game description...
+            </p>
+
+            <div class="game-features">
+                <h3 style="color: #667eea; margin-bottom: 1rem;">
+                    <i class="fas fa-star"></i> Features
+                </h3>
+                <ul class="features-list">
+                    <li><i class="fas fa-check-circle"></i> Free to Play</li>
+                    <li><i class="fas fa-check-circle"></i> No Download Required</li>
+                    <li><i class="fas fa-check-circle"></i> Instant Access</li>
+                    <li><i class="fas fa-check-circle"></i> High Quality Graphics</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Game Controls -->
+        <div class="controls-section">
+            <h2 class="section-title">
+                <i class="fas fa-keyboard"></i> How to Play
+            </h2>
+            <div class="controls-grid">
+                <div class="control-item">
+                    <i class="fas fa-arrows-alt"></i>
+                    <p>Arrow Keys - Move</p>
+                </div>
+                <div class="control-item">
+                    <i class="fas fa-space-shuttle"></i>
+                    <p>Space - Jump/Action</p>
+                </div>
+                <div class="control-item">
+                    <i class="fas fa-mouse"></i>
+                    <p>Mouse - Aim/Click</p>
+                </div>
+                <div class="control-item">
+                    <i class="fas fa-keyboard"></i>
+                    <p>WASD - Movement</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Games -->
+        <div class="related-games-section">
+            <h2 class="section-title">
+                <i class="fas fa-th-large"></i> Related Games
+            </h2>
+            <div class="related-games-grid" id="relatedGamesGrid">
+                <!-- Related games will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, getDocs, query, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8D1Q6g_FNJYaFB2B4fIry1jGR2ArE9J8",
+            authDomain: "artonix-1fa99.firebaseapp.com",
+            projectId: "artonix-1fa99",
+            storageBucket: "artonix-1fa99.firebasestorage.app",
+            messagingSenderId: "661275750667",
+            appId: "1:661275750667:web:7cc2f54dc5fb47a573b20e",
+            measurementId: "G-D227P6KRDZ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Load Game Data
+        function loadGame() {
+            const gameData = JSON.parse(localStorage.getItem('currentGame'));
+            
+            if (!gameData) {
+                showNotification('❌ Game not found!');
+                setTimeout(() => window.location.href = 'index.html', 2000);
+                return;
+            }
+
+            // Set game info
+            document.getElementById('gameTitle').textContent = gameData.name;
+            document.getElementById('gameDescription').textContent = gameData.description || 'No description available.';
+            document.getElementById('gameFrame').src = gameData.gameUrl;
+
+            // Set meta info
+            const metaHTML = `
+                <span><i class="fas fa-folder"></i> ${gameData.category || 'Uncategorized'}</span>
+                <span><i class="fas fa-clock"></i> Unlimited Play Time</span>
+                <span><i class="fas fa-users"></i> Single Player</span>
+            `;
+            document.getElementById('gameMeta').innerHTML = metaHTML;
+
+            // Load related games
+            loadRelatedGames(gameData.category);
+        }
+
+        // Load Related Games
+        async function loadRelatedGames(currentCategory) {
+            try {
+                const q = query(collection(db, 'games'), limit(4));
+                const querySnapshot = await getDocs(q);
+
+                const relatedGrid = document.getElementById('relatedGamesGrid');
+                relatedGrid.innerHTML = '';
+
+                let count = 0;
+                querySnapshot.forEach((doc) => {
+                    if (count >= 4) return;
+                    const game = doc.data();
+                    
+                    const gameCard = `
+                        <div class="related-game-card" onclick="playRelatedGame('${game.name}', '${game.description}', '${game.gameUrl}', '${game.imageUrl}', '${game.category}')">
+                            <div class="related-game-image" style="background: url('${game.imageUrl}') center/cover;"></div>
+                            <div class="related-game-info">
+                                <h3 class="related-game-title">${game.name}</h3>
+                                <p class="related-game-category">${game.category}</p>
+                            </div>
+                        </div>
+                    `;
+                    relatedGrid.innerHTML += gameCard;
+                    count++;
+                });
+            } catch (error) {
+                console.error('Error loading related games:', error);
+            }
+        }
+
+        // Play Related Game
+        window.playRelatedGame = (gameName, gameDescription, gameUrl, imageUrl, category) => {
+            const gameData = {
+                name: gameName,
+                description: gameDescription,
+                gameUrl: gameUrl,
+                imageUrl: imageUrl,
+                category: category
+            };
+            localStorage.setItem('currentGame', JSON.stringify(gameData));
+            loadGame();
+            showNotification('🎮 Loading ' + gameName + '...');
+        };
+
+        // Go Back
+        window.goBack = () => {
+            window.location.href = 'index.html';
+        };
+
+        // Toggle Fullscreen
+        window.toggleFullscreen = () => {
+            const container = document.getElementById('gameFrameContainer');
+            const btns = document.querySelectorAll('.fullscreen-btn, .fullscreen-btn-small');
+            
+            if (!document.fullscreenElement) {
+                // Enter fullscreen
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.mozRequestFullScreen) {
+                    container.mozRequestFullScreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                }
+                
+                // Update all fullscreen buttons
+                btns.forEach(btn => {
+                    btn.innerHTML = '<i class="fas fa-compress"></i> <span>Exit</span>';
+                });
+                
+                showNotification('🖥️ Fullscreen enabled - Press ESC to exit');
+            } else {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                
+                // Update all fullscreen buttons
+                btns.forEach(btn => {
+                    btn.innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>';
+                });
+                
+                showNotification('🖥️ Fullscreen disabled');
+            }
+        };
+
+        // Listen for fullscreen changes
+        document.addEventListener('fullscreenchange', () => {
+            const btns = document.querySelectorAll('.fullscreen-btn, .fullscreen-btn-small');
+            if (!document.fullscreenElement) {
+                btns.forEach(btn => {
+                    btn.innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>';
+                });
+            }
+        });
+
+        // Show Notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Load game on page load
+        loadGame();
+
+        console.log('🎮 Game Page Ready!');
+    </script>
+</body>
+</html>
