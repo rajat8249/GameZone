@@ -344,8 +344,8 @@ body {
 
 .games-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);  /* ✅ 5 columns on desktop */
-    gap: 2rem;
+    grid-template-columns: repeat(6, 1fr);  /* ✅ 6 columns on desktop */
+    gap: 1.5rem;
 }
 
 /* ====================================
