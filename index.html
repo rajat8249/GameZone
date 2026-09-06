@@ -18,6 +18,7 @@
             cursor: pointer;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .game-card:hover {
@@ -41,7 +42,7 @@
             background-repeat: no-repeat;
             position: relative;
             overflow: hidden;
-            border-radius: 15px 15px 0 0;
+            border-radius: 15px;
             background-color: #0f0f1a;
         }
 
@@ -91,12 +92,14 @@
             justify-content: space-between;
         }
 
+        /* ✅ Title hidden by default */
         .game-card-title {
             font-size: 1.2rem;
             font-weight: 600;
             color: #667eea;
             margin-bottom: 0.4rem;
             line-height: 1.4;
+            display: none;  /* Hidden by default */
         }
 
         .game-card-actions {
@@ -127,19 +130,46 @@
             transform: scale(1.05);
         }
 
-        .game-category-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            z-index: 3;
-            backdrop-filter: blur(5px);
+        /* ✅ Title overlay on hover (Desktop) */
+        @media (min-width: 481px) {
+            .game-card:hover .game-card-title {
+                display: block;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.85);
+                color: white;
+                padding: 0.8rem 0.5rem;
+                text-align: center;
+                font-size: 0.95rem;
+                z-index: 10;
+                border-radius: 0 0 15px 15px;
+                animation: fadeIn 0.3s ease;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ✅ Mobile mein completely hide */
+        @media (max-width: 480px) {
+            .game-card-content,
+            .game-card-title,
+            .game-card-actions,
+            .play-btn {
+                display: none !important;
+            }
+            .game-card {
+                padding: 0;
+            }
+            .game-card-image {
+                height: 100%;
+                min-height: 120px;
+                border-radius: 15px;
+            }
         }
 
         /* Loading Styles */
@@ -450,26 +480,19 @@
                     return;
                 }
 
-                // Display games - FIXED IMAGE STYLING WITH FALLBACK
+                // ✅ Display games - REMOVED ICON AND BADGE
                 games.forEach(game => {
                     const hasImage = game.imageUrl && game.imageUrl.trim() !== '';
                     
                     const gameCard = `
-                        <div class="game-card" onclick="playGame('${game.name}', '${game.gameUrl}', '${game.description}', '${game.imageUrl}', '${game.category}')">
-                            <div class="game-card-image" ${hasImage ? `style="background-image: url('${game.imageUrl}');"` : ''}>
-                                <span class="game-category-badge">${game.category}</span>
-                                <i class="fas fa-gamepad"></i>
-                            </div>
-                            <div class="game-card-content">
-                                <h3 class="game-card-title">${game.name}</h3>
-                                <div class="game-card-actions">
-                                    <button class="play-btn">
-                                        <i class="fas fa-play"></i> Play Now
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+    <div class="game-card" onclick="playGame('${game.name}', '${game.gameUrl}', '${game.description}', '${game.imageUrl}', '${game.category}')">
+        <div class="game-card-image" ${hasImage ? `style="background-image: url('${game.imageUrl}');"` : ''}>
+        </div>
+        <div class="game-card-content">
+            <h3 class="game-card-title">${game.name}</h3>
+        </div>
+    </div>
+`;
                     gamesGrid.innerHTML += gameCard;
                 });
 
